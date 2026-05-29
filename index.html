@@ -1,0 +1,826 @@
+
+<h2 class="sr-only">Shopify Mockup Prompt Generator for Nano Banana 2</h2>
+<style>
+  :root {
+    --pg-bg: #f6f4ef;
+    --pg-surface: #fffdf8;
+    --pg-surface-2: #f9faf7;
+    --pg-text: #171717;
+    --pg-muted: #6d706a;
+    --pg-soft: #8b8e86;
+    --pg-border: #ddd8cb;
+    --pg-border-strong: #c9c1b0;
+    --pg-accent: #205f4a;
+    --pg-accent-2: #b4682a;
+    --pg-accent-soft: #e8f1eb;
+    --pg-radius: 8px;
+    --pg-shadow: 0 18px 50px rgba(42, 39, 31, 0.12);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    min-height: 100vh;
+    background:
+      linear-gradient(135deg, rgba(32,95,74,0.10), transparent 32%),
+      linear-gradient(315deg, rgba(180,104,42,0.10), transparent 30%),
+      var(--pg-bg);
+    color: var(--pg-text);
+    font-family: var(--font-sans, Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+  }
+  .sr-only {
+    position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+  }
+  .wrap {
+    width: min(1120px, calc(100% - 32px));
+    margin: 28px auto;
+    padding: 28px;
+    background: rgba(255,253,248,0.94);
+    border: 1px solid rgba(201,193,176,0.85);
+    border-radius: 18px;
+    box-shadow: var(--pg-shadow);
+  }
+  .header {
+    display: grid;
+    gap: 8px;
+    margin-bottom: 24px;
+    padding: 0 0 22px;
+    border-bottom: 1px solid var(--pg-border);
+  }
+  .header .badge {
+    width: fit-content;
+    display: inline-flex; align-items: center; gap: 7px;
+    background: #151515; color: #fff;
+    font-size: 12px; font-weight: 700; padding: 7px 11px;
+    border-radius: 999px;
+  }
+  .header h1 {
+    max-width: 760px;
+    font-size: clamp(26px, 4vw, 44px);
+    line-height: 1.05;
+    font-weight: 800;
+    color: var(--pg-text);
+    letter-spacing: 0;
+  }
+  .header p {
+    max-width: 720px;
+    font-size: 15px;
+    color: var(--pg-muted);
+    line-height: 1.65;
+  }
+  .section { margin-bottom: 18px; min-width: 0; }
+  .section label {
+    display: block;
+    font-size: 11px;
+    font-weight: 800;
+    color: #45483f;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 8px;
+  }
+  .section label span {
+    color: var(--pg-soft);
+    font-weight: 600;
+    text-transform: none;
+    letter-spacing: 0;
+    font-size: 12px;
+  }
+  input[type=text], textarea, select {
+    width: 100%;
+    min-height: 44px;
+    background: #fff;
+    border: 1px solid var(--pg-border);
+    border-radius: var(--pg-radius);
+    color: var(--pg-text);
+    font-family: inherit;
+    font-size: 14px;
+    padding: 11px 12px;
+    outline: none;
+    box-shadow: 0 1px 0 rgba(23,23,23,0.03);
+    transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+  }
+  select {
+    cursor: pointer;
+    appearance: none;
+    background-image:
+      linear-gradient(45deg, transparent 50%, var(--pg-muted) 50%),
+      linear-gradient(135deg, var(--pg-muted) 50%, transparent 50%);
+    background-position: calc(100% - 18px) 19px, calc(100% - 13px) 19px;
+    background-size: 5px 5px, 5px 5px;
+    background-repeat: no-repeat;
+    padding-right: 34px;
+  }
+  input[type=text]:focus, textarea:focus, select:focus {
+    border-color: var(--pg-accent);
+    box-shadow: 0 0 0 3px rgba(32,95,74,0.13);
+  }
+  textarea { resize: vertical; min-height: 92px; line-height: 1.6; }
+  .row-2, .row-3, .row-4 { display: grid; gap: 14px; align-items: start; }
+  .row-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .row-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .row-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .chip-group { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip {
+    min-height: 34px;
+    padding: 8px 13px;
+    border-radius: 999px;
+    border: 1px solid var(--pg-border);
+    font-size: 13px;
+    font-weight: 700;
+    background: #fff;
+    color: #50544b;
+    cursor: pointer;
+    user-select: none;
+    transition: border-color 0.15s, background 0.15s, color 0.15s, transform 0.12s, box-shadow 0.15s;
+  }
+  .chip:hover {
+    border-color: var(--pg-accent);
+    color: var(--pg-accent);
+    transform: translateY(-1px);
+  }
+  .chip.active {
+    background: var(--pg-accent);
+    border-color: var(--pg-accent);
+    color: #fff;
+    box-shadow: 0 8px 18px rgba(32,95,74,0.18);
+  }
+  .hint { font-size: 12px; color: var(--pg-soft); margin-top: 7px; line-height: 1.45; }
+
+  .toggle-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    background: linear-gradient(180deg, #ffffff, #f9faf7);
+    border: 1px solid var(--pg-border);
+    border-radius: var(--pg-radius);
+    padding: 14px;
+  }
+  .toggle-row .tinfo { flex: 1; min-width: 0; }
+  .toggle-row .tinfo .tlabel { font-size: 15px; color: var(--pg-text); font-weight: 800; }
+  .toggle-row .tinfo .tdesc { font-size: 12px; color: var(--pg-muted); margin-top: 4px; line-height: 1.45; }
+  .toggle { position: relative; width: 46px; height: 26px; flex-shrink: 0; }
+  .toggle input { opacity: 0; width: 0; height: 0; }
+  .toggle-slider {
+    position: absolute; inset: 0;
+    background: #c8c3b8;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .toggle-slider::before {
+    content: "";
+    position: absolute;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: #fff;
+    left: 3px; top: 3px;
+    transition: transform 0.2s;
+    box-shadow: 0 2px 6px rgba(23,23,23,0.22);
+  }
+  .toggle input:checked + .toggle-slider { background: var(--pg-accent); }
+  .toggle input:checked + .toggle-slider::before { transform: translateX(20px); }
+
+  .mockup-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+  .mcard {
+    min-height: 116px;
+    border: 1px solid var(--pg-border);
+    border-radius: var(--pg-radius);
+    padding: 16px 12px 14px;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s, transform 0.12s, box-shadow 0.15s;
+    background: #fff;
+    text-align: left;
+  }
+  .mcard:hover {
+    border-color: var(--pg-accent);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 24px rgba(32,95,74,0.10);
+  }
+  .mcard.active {
+    border-color: var(--pg-accent);
+    background: var(--pg-accent-soft);
+    box-shadow: inset 0 0 0 1px rgba(32,95,74,0.10);
+  }
+  .mcard-icon {
+    width: 34px; height: 34px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
+    border-radius: 999px;
+    background: #f1eee7;
+    color: var(--pg-accent-2);
+    font-size: 20px;
+  }
+  .mcard.active .mcard-icon { background: var(--pg-accent); color: #fff; }
+  .mcard-label { font-size: 14px; color: var(--pg-text); font-weight: 800; display: block; }
+  .mcard-sub { font-size: 12px; color: var(--pg-muted); margin-top: 4px; display: block; line-height: 1.35; }
+
+  .divider {
+    border: none;
+    border-top: 1px solid var(--pg-border);
+    margin: 26px 0;
+  }
+  .btn-gen {
+    width: 100%;
+    min-height: 52px;
+    padding: 14px 18px;
+    border-radius: var(--pg-radius);
+    background: #171717;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 800;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.12s, box-shadow 0.15s, background 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    box-shadow: 0 14px 28px rgba(23,23,23,0.18);
+  }
+  .btn-gen:hover { background: var(--pg-accent); transform: translateY(-1px); }
+  .btn-gen:active { transform: translateY(0); box-shadow: 0 8px 18px rgba(23,23,23,0.16); }
+  .output-box {
+    background: #171717;
+    border: 1px solid #2b2b2b;
+    border-radius: 14px;
+    padding: 18px;
+    margin-top: 20px;
+    display: none;
+    color: #f8f6ef;
+    box-shadow: 0 18px 42px rgba(23,23,23,0.22);
+  }
+  .output-box.visible { display: block; }
+  .output-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+  .output-header span {
+    font-size: 11px;
+    font-weight: 800;
+    color: #c8c3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .output-header button {
+    background: #242424;
+    border: 1px solid #3a3a3a;
+    border-radius: var(--pg-radius);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 800;
+    padding: 8px 11px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .output-header button:hover { border-color: #7fb39f; background: #20342c; }
+  .prompt-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+  .ptab {
+    padding: 8px 12px;
+    border-radius: 999px;
+    border: 1px solid #3a3a3a;
+    font-size: 12px;
+    font-weight: 800;
+    background: #242424;
+    color: #d5d0c5;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s, color 0.15s;
+  }
+  .ptab.active { background: #e8f1eb; border-color: #e8f1eb; color: #174b3a; }
+  .prompt-text, .neg-text {
+    font-size: 13px;
+    line-height: 1.7;
+    color: #f8f6ef;
+    background: #202020;
+    border: 1px solid #353535;
+    border-radius: var(--pg-radius);
+    padding: 14px;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .neg-text { color: #d5d0c5; }
+  .tips {
+    margin-top: 12px;
+    border: 1px solid #353535;
+    border-radius: var(--pg-radius);
+    padding: 14px;
+    background: #202020;
+  }
+  .tips-title { font-size: 12px; font-weight: 800; color: #f8f6ef; margin-bottom: 8px; }
+  .tips ul { list-style: none; padding: 0; }
+  .tips li {
+    font-size: 12px;
+    color: #d5d0c5;
+    padding: 4px 0;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    line-height: 1.45;
+  }
+  .tips li::before { content: ">"; color: #7fb39f; font-weight: 900; flex-shrink: 0; }
+  .params-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+  .param-chip {
+    background: #202020;
+    border: 1px solid #353535;
+    border-radius: var(--pg-radius);
+    padding: 11px 10px;
+    text-align: center;
+  }
+  .param-chip .pk { font-size: 10px; color: #a9a397; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; }
+  .param-chip .pv { font-size: 13px; color: #fff; font-weight: 800; }
+  select option { background: #fff; color: var(--pg-text); }
+
+  .sec-group {
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--pg-soft);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    border-bottom: 1px solid var(--pg-border);
+    padding-bottom: 7px;
+    margin-bottom: 14px;
+  }
+
+  @media (max-width: 860px) {
+    .row-3, .row-4, .mockup-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .wrap { width: min(100% - 24px, 760px); padding: 22px; margin: 18px auto; }
+  }
+
+  @media (max-width: 640px) {
+    .row-2, .row-3, .row-4, .mockup-grid, .params-grid { grid-template-columns: 1fr; }
+    .wrap { width: calc(100% - 18px); padding: 18px; border-radius: 12px; }
+    .header h1 { font-size: 28px; }
+    .mcard { min-height: auto; }
+    .output-header { align-items: flex-start; }
+  }
+</style>
+
+<div class="wrap">
+  <div class="header">
+    <div class="badge"><i class="ti ti-shirt" aria-hidden="true"></i> Shopify Mockup Studio</div>
+    <h1>Nano Banana 2 — Prompt Generator</h1>
+    <p>Fill in your product details. Get a production-ready prompt + negative prompt for photorealistic on-model mockups.</p>
+  </div>
+
+  <!-- MOCKUP STYLE — new section -->
+  <div class="section">
+    <label>Mockup style <span>— choose how the product is presented</span></label>
+    <div class="mockup-grid" id="mockup-cards">
+      <div class="mcard active" data-val="on-model">
+        <i class="ti ti-user mcard-icon" aria-hidden="true"></i>
+        <span class="mcard-label">On model</span>
+        <span class="mcard-sub">Real person wearing it</span>
+      </div>
+      <div class="mcard" data-val="ghost-mannequin">
+        <i class="ti ti-ghost mcard-icon" aria-hidden="true"></i>
+        <span class="mcard-label">Ghost mannequin</span>
+        <span class="mcard-sub">Invisible body inside</span>
+      </div>
+      <div class="mcard" data-val="flat-lay">
+        <i class="ti ti-layout-distribute-horizontal mcard-icon" aria-hidden="true"></i>
+        <span class="mcard-label">Flat lay</span>
+        <span class="mcard-sub">Overhead product only</span>
+      </div>
+      <div class="mcard" data-val="hanger">
+        <i class="ti ti-moodboard mcard-icon" aria-hidden="true"></i>
+        <span class="mcard-label">On hanger</span>
+        <span class="mcard-sub">Hung, lifestyle BG</span>
+      </div>
+      <div class="mcard" data-val="folded">
+        <i class="ti ti-stack mcard-icon" aria-hidden="true"></i>
+        <span class="mcard-label">Folded stack</span>
+        <span class="mcard-sub">Neatly folded, shelf</span>
+      </div>
+      <div class="mcard" data-val="lifestyle-candid">
+        <i class="ti ti-camera mcard-icon" aria-hidden="true"></i>
+        <span class="mcard-label">Lifestyle candid</span>
+        <span class="mcard-sub">Natural / outdoor scene</span>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="section">
+    <label>Product type</label>
+    <div class="chip-group" id="product-chips">
+      <div class="chip active" data-val="t-shirt">T-shirt</div>
+      <div class="chip" data-val="hoodie">Hoodie</div>
+      <div class="chip" data-val="polo shirt">Polo</div>
+      <div class="chip" data-val="tote bag">Tote bag</div>
+      <div class="chip" data-val="cap">Cap</div>
+      <div class="chip" data-val="jacket">Jacket</div>
+      <div class="chip" data-val="sweatshirt">Sweatshirt</div>
+      <div class="chip" data-val="crop top">Crop top</div>
+      <div class="chip" data-val="dress">Dress</div>
+      <div class="chip" data-val="denim jeans">Jeans</div>
+      <div class="chip" data-val="overshirt">Overshirt</div>
+      <div class="chip" data-val="activewear set">Activewear</div>
+    </div>
+  </div>
+
+  <!-- OVERSIZE TOGGLE — new section -->
+  <div class="section">
+    <label>Fit style</label>
+    <div class="toggle-row">
+      <div class="tinfo">
+        <div class="tlabel">Oversized fit</div>
+        <div class="tdesc">Boxy, dropped shoulders, relaxed silhouette — streetwear/unisex look</div>
+      </div>
+      <label class="toggle" style="margin-left:16px">
+        <input type="checkbox" id="oversize-toggle">
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+  </div>
+
+  <div class="row-3">
+    <div class="section">
+      <label>Fabric / material</label>
+      <select id="fabric">
+        <option value="soft combed cotton jersey fabric">Cotton jersey</option>
+        <option value="heavyweight premium cotton fleece">Heavy fleece</option>
+        <option value="breathable linen blend fabric">Linen blend</option>
+        <option value="structured denim fabric">Denim</option>
+        <option value="smooth satin fabric">Satin</option>
+        <option value="performance stretch fabric">Performance stretch</option>
+        <option value="ribbed knit fabric">Rib knit</option>
+      </select>
+    </div>
+    <div class="section">
+      <label>Collection / season</label>
+      <select id="collection">
+        <option value="core everyday collection">Core everyday</option>
+        <option value="summer drop collection">Summer drop</option>
+        <option value="winter essentials collection">Winter essentials</option>
+        <option value="streetwear capsule collection">Streetwear capsule</option>
+        <option value="premium basics collection">Premium basics</option>
+        <option value="festive limited edition collection">Limited edition</option>
+      </select>
+    </div>
+    <div class="section">
+      <label>Store image use</label>
+      <select id="store-use">
+        <option value="product page hero image">Product page hero</option>
+        <option value="collection grid thumbnail">Collection thumbnail</option>
+        <option value="homepage banner campaign image">Homepage banner</option>
+        <option value="social media ad creative">Social ad creative</option>
+        <option value="lookbook editorial image">Lookbook</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="row-2">
+    <div class="section">
+      <label>Target customer</label>
+      <select id="customer">
+        <option value="young adult fashion shoppers">Young adults</option>
+        <option value="unisex streetwear customers">Unisex streetwear</option>
+        <option value="minimal premium basics shoppers">Premium basics</option>
+        <option value="fitness and athleisure customers">Fitness / athleisure</option>
+        <option value="college casualwear customers">College casualwear</option>
+        <option value="luxury resortwear shoppers">Resortwear</option>
+      </select>
+    </div>
+    <div class="section">
+      <label>Brand direction</label>
+      <select id="brand-direction">
+        <option value="clean DTC fashion brand">Clean DTC</option>
+        <option value="bold streetwear label">Bold streetwear</option>
+        <option value="minimal luxury clothing label">Minimal luxury</option>
+        <option value="playful youth fashion brand">Playful youth</option>
+        <option value="premium sustainable apparel brand">Sustainable premium</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="section">
+    <label>Design description <span>— describe what's printed/embroidered on the product</span></label>
+    <textarea id="design-desc" placeholder="e.g. a minimalist black line-art lotus flower centered on the chest, clean and bold"></textarea>
+  </div>
+
+  <div class="row-2">
+    <div class="section">
+      <label>Product color</label>
+      <input type="text" id="product-color" placeholder="e.g. white, navy, jet black" value="white">
+    </div>
+    <div class="section">
+      <label>Design placement</label>
+      <select id="placement">
+        <option value="centered on the chest">Center chest</option>
+        <option value="left chest pocket area">Left chest</option>
+        <option value="full front print">Full front</option>
+        <option value="back centered print">Back center</option>
+        <option value="all-over print">All-over print</option>
+        <option value="sleeve print">Sleeve</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="section">
+    <label>Model gender & ethnicity <span>— for diverse Shopify catalog</span></label>
+    <div class="row-2">
+      <select id="model-gender">
+        <option value="a young man">Male model</option>
+        <option value="a young woman">Female model</option>
+        <option value="a person">Gender-neutral</option>
+      </select>
+      <select id="model-ethnicity">
+        <option value="">Any / diverse</option>
+        <option value="South Asian">South Asian</option>
+        <option value="East Asian">East Asian</option>
+        <option value="Black">Black</option>
+        <option value="Latino">Latino</option>
+        <option value="White">White / Caucasian</option>
+        <option value="Middle Eastern">Middle Eastern</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="row-2">
+    <div class="section">
+      <label>Setting / background</label>
+      <select id="setting">
+        <option value="clean white studio backdrop">White studio</option>
+        <option value="minimalist grey seamless studio background">Grey studio</option>
+        <option value="modern lifestyle apartment interior">Lifestyle interior</option>
+        <option value="urban street, city background softly blurred">Urban street</option>
+        <option value="outdoor cafe setting, warm natural light">Outdoor cafe</option>
+        <option value="beach or coastal background">Beach / coastal</option>
+        <option value="minimal beige linen background">Beige / linen</option>
+        <option value="rooftop cityscape, golden hour light">Golden hour rooftop</option>
+      </select>
+    </div>
+    <div class="section">
+      <label>Shot type</label>
+      <select id="shot">
+        <option value="front-facing full body shot">Full body front</option>
+        <option value="front-facing torso and chest closeup">Torso closeup</option>
+        <option value="three-quarter angle, waist-up shot">3/4 waist up</option>
+        <option value="lifestyle candid pose, upper body">Lifestyle candid</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="section">
+    <label>Mood / style</label>
+    <div class="chip-group" id="mood-chips">
+      <div class="chip active" data-val="clean and commercial">Clean & commercial</div>
+      <div class="chip" data-val="editorial fashion">Editorial fashion</div>
+      <div class="chip" data-val="streetwear aesthetic">Streetwear</div>
+      <div class="chip" data-val="minimalist luxury">Minimalist luxury</div>
+      <div class="chip" data-val="sporty active lifestyle">Sporty / active</div>
+      <div class="chip" data-val="cozy and casual">Cozy & casual</div>
+    </div>
+  </div>
+
+  <div class="row-3">
+    <div class="section">
+      <label>Pose / styling</label>
+      <select id="styling">
+        <option value="simple neutral styling with no distracting accessories">Clean styling</option>
+        <option value="styled with matching denim and subtle accessories">Denim styling</option>
+        <option value="styled with layered streetwear accessories">Streetwear layers</option>
+        <option value="styled with premium minimal accessories">Premium minimal</option>
+        <option value="active pose with sporty styling">Sporty action</option>
+      </select>
+    </div>
+    <div class="section">
+      <label>Composition</label>
+      <select id="composition">
+        <option value="centered composition with generous whitespace for Shopify UI">Centered</option>
+        <option value="left-weighted composition with empty space for banner text">Banner space</option>
+        <option value="tight crop emphasizing print and fabric texture">Detail crop</option>
+        <option value="catalog grid composition with consistent product scale">Grid consistent</option>
+      </select>
+    </div>
+    <div class="section">
+      <label>Aspect ratio</label>
+      <select id="aspect">
+        <option value="1:1 square">1:1 Square</option>
+        <option value="4:5 portrait">4:5 Portrait</option>
+        <option value="3:4 catalog portrait">3:4 Catalog</option>
+        <option value="16:9 banner">16:9 Banner</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="section">
+    <label>Store requirements <span>— optional details for the product page</span></label>
+    <textarea id="store-requirements" placeholder="e.g. keep the print readable, show premium fabric texture, leave room on right side for sale badge"></textarea>
+    <div class="hint">These details are added to the prompt only when filled.</div>
+  </div>
+
+  <hr class="divider">
+
+  <button class="btn-gen" onclick="generatePrompt()">
+    <i class="ti ti-sparkles" aria-hidden="true"></i> Generate Prompt
+  </button>
+
+  <div class="output-box" id="output-box">
+    <div class="output-header">
+      <span>Prompt output</span>
+      <button onclick="copyPrompt()" id="copy-btn"><i class="ti ti-copy" style="font-size:13px" aria-hidden="true"></i> Copy</button>
+    </div>
+    <div class="prompt-tabs">
+      <div class="ptab active" onclick="switchTab('positive',this)">Positive prompt</div>
+      <div class="ptab" onclick="switchTab('negative',this)">Negative prompt</div>
+      <div class="ptab" onclick="switchTab('params',this)">Settings</div>
+    </div>
+    <div id="tab-positive"><div class="prompt-text" id="prompt-out"></div></div>
+    <div id="tab-negative" style="display:none"><div class="neg-text" id="neg-out"></div></div>
+    <div id="tab-params" style="display:none">
+      <div class="params-grid" id="params-out"></div>
+      <div class="tips" style="margin-top:12px">
+        <div class="tips-title">Nano Banana 2 workflow tips</div>
+        <ul id="tips-list"></ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  let selectedProduct = "t-shirt";
+  let selectedMood = "clean and commercial";
+  let selectedMockup = "on-model";
+  let currentTab = "positive";
+  let generatedPositive = "";
+  let generatedNegative = "";
+
+  document.querySelectorAll('#product-chips .chip').forEach(c => {
+    c.addEventListener('click', () => {
+      document.querySelectorAll('#product-chips .chip').forEach(x => x.classList.remove('active'));
+      c.classList.add('active');
+      selectedProduct = c.dataset.val;
+    });
+  });
+
+  document.querySelectorAll('#mood-chips .chip').forEach(c => {
+    c.addEventListener('click', () => {
+      document.querySelectorAll('#mood-chips .chip').forEach(x => x.classList.remove('active'));
+      c.classList.add('active');
+      selectedMood = c.dataset.val;
+    });
+  });
+
+  document.querySelectorAll('#mockup-cards .mcard').forEach(c => {
+    c.addEventListener('click', () => {
+      document.querySelectorAll('#mockup-cards .mcard').forEach(x => x.classList.remove('active'));
+      c.classList.add('active');
+      selectedMockup = c.dataset.val;
+      updateShotVisibility();
+    });
+  });
+
+  function updateShotVisibility() {
+    const shotSection = document.getElementById('shot').closest('.section');
+    const modelSection = document.getElementById('model-gender').closest('.section');
+    const noModel = ['flat-lay','hanger','folded'].includes(selectedMockup);
+    shotSection.style.display = noModel ? 'none' : '';
+    modelSection.style.display = noModel ? 'none' : '';
+  }
+
+  function switchTab(tab, el) {
+    currentTab = tab;
+    document.querySelectorAll('.ptab').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById('tab-positive').style.display = tab === 'positive' ? 'block' : 'none';
+    document.getElementById('tab-negative').style.display = tab === 'negative' ? 'block' : 'none';
+    document.getElementById('tab-params').style.display = tab === 'params' ? 'block' : 'none';
+  }
+
+  function generatePrompt() {
+    const design = document.getElementById('design-desc').value.trim() || "a bold graphic print";
+    const color = document.getElementById('product-color').value.trim() || "white";
+    const placement = document.getElementById('placement').value;
+    const gender = document.getElementById('model-gender').value;
+    const ethnicity = document.getElementById('model-ethnicity').value;
+    const setting = document.getElementById('setting').value;
+    const shot = document.getElementById('shot').value;
+    const isOversize = document.getElementById('oversize-toggle').checked;
+    const fabric = document.getElementById('fabric').value;
+    const collection = document.getElementById('collection').value;
+    const storeUse = document.getElementById('store-use').value;
+    const customer = document.getElementById('customer').value;
+    const brandDirection = document.getElementById('brand-direction').value;
+    const styling = document.getElementById('styling').value;
+    const composition = document.getElementById('composition').value;
+    const aspect = document.getElementById('aspect').value;
+    const storeRequirements = document.getElementById('store-requirements').value.trim();
+
+    const modelDesc = ethnicity ? `${ethnicity} ${gender}` : gender;
+    const fitDesc = isOversize
+      ? `oversized boxy fit ${selectedProduct}, dropped shoulders, relaxed silhouette`
+      : `well-fitted ${selectedProduct}`;
+    const storeContext = `${storeUse} for a ${brandDirection}, ${collection}, targeted at ${customer}, ${composition}, ${aspect} aspect ratio`;
+    const materialContext = `${fabric}, realistic weave, stitching, seams, collar shape, hem, and garment construction`;
+    const optionalRequirements = storeRequirements ? `, store requirements: ${storeRequirements}` : "";
+
+    let positive = "";
+    let tips = [];
+
+    if (selectedMockup === "on-model") {
+      positive = `Commercial product photography, ${shot} of ${modelDesc} wearing a ${color} ${fitDesc} made from ${materialContext} featuring ${design} ${placement}, ${styling}, model is well-groomed with natural relaxed expression and confident pose, ${setting}, ${selectedMood} aesthetic, ${storeContext}, professional studio lighting with soft key light and subtle fill, sharp focus on the garment and print, photorealistic skin tones, accurate fabric texture and drape${isOversize ? ', fabric has natural relaxed drape and loose folds typical of oversized streetwear' : ''}, true-to-life color reproduction of the design, no distortion on the print, Shopify fashion e-commerce photo, 85mm lens, f/4 aperture, high dynamic range, commercial catalog quality, hyperrealistic${optionalRequirements}`;
+      tips = [
+        "Use IP-Adapter at weight 0.75–0.85 to lock in the design artwork",
+        "ControlNet Canny for designs with precise lines or text",
+        isOversize ? "Add 'boxy silhouette, dropped shoulders' to reinforce the oversize shape" : "Use 'slim fit, form fitting' to keep the silhouette clean",
+        aspect === "16:9 banner" ? "Keep important garment details away from banner crop edges" : "Run at 1024×1024 minimum, hires fix 2× at denoising 0.40",
+        "CFG scale 6–7 for photorealistic skin and fabric"
+      ];
+    } else if (selectedMockup === "ghost-mannequin") {
+      positive = `Ghost mannequin product photography of a ${color} ${fitDesc} made from ${materialContext} featuring ${design} ${placement}, invisible mannequin inside giving the garment a 3D floating body shape, ${setting}, front view, ${storeContext}, perfectly shaped collar and sleeves, smooth fabric with natural drape${isOversize ? ', relaxed boxy silhouette with dropped shoulder seams' : ''}, even studio lighting from both sides, no wrinkles, sharp focus across the entire garment, accurate color and print reproduction, professional Shopify product photo, white or grey seamless background, high resolution${optionalRequirements}`;
+      tips = [
+        "Ghost mannequin works best with white or light grey studio background",
+        "Use ControlNet depth map from a real shirt photo for accurate 3D shape",
+        isOversize ? "Specify 'boxy shape, wide chest, dropped shoulders' for oversize mannequin fill" : "",
+        "IP-Adapter at 0.8 for design accuracy",
+        "Post-process: remove any visible mannequin parts in Photoshop"
+      ].filter(Boolean);
+    } else if (selectedMockup === "flat-lay") {
+      positive = `Product photography flat lay of a ${color} ${fitDesc} made from ${materialContext} featuring ${design} ${placement}, arranged neatly on a ${setting}, overhead top-down view, ${storeContext}, sharp focus across the entire garment, perfectly smooth fabric with natural fold shadows${isOversize ? ', fabric laid out wide showing oversized boxy proportions' : ''}, clean presentation, professional product photography lighting, no wrinkles, no mannequin, no person, ${selectedMood} aesthetic, Shopify product photo, high resolution, commercial quality, photorealistic fabric texture${optionalRequirements}`;
+      tips = [
+        "Flat lay works best with overhead orthographic framing in ControlNet",
+        "Add props (sunglasses, accessories) to make it lifestyle-feel",
+        isOversize ? "Show the full width when flat — oversize fits look great spread out" : "",
+        "Use a texture reference image for fabric realism",
+        "Try 3:4 aspect ratio for Shopify collection thumbnails"
+      ].filter(Boolean);
+    } else if (selectedMockup === "hanger") {
+      positive = `Product photography of a ${color} ${fitDesc} made from ${materialContext} featuring ${design} ${placement} hanging on a minimalist wooden or metal hanger, ${setting}, front view, ${storeContext}, fabric hanging naturally with gravity${isOversize ? ', relaxed oversized silhouette draping loosely from the hanger' : ''}, garment centered in frame, soft directional lighting, clean background, sharp focus on print and fabric texture, no person, lifestyle product photo, ${selectedMood} aesthetic, Shopify product image, commercial quality${optionalRequirements}`;
+      tips = [
+        "Hanger shots work great for lifestyle backgrounds (brick wall, plant shelf)",
+        "Use ControlNet normal map for realistic fabric drape physics",
+        isOversize ? "Oversize garments drape dramatically on hanger — great visual" : "",
+        "IP-Adapter 0.75 for design fidelity on draped fabric",
+        "Try warm golden hour background for lifestyle feel"
+      ].filter(Boolean);
+    } else if (selectedMockup === "folded") {
+      positive = `Product photography of a neatly folded ${color} ${fitDesc} made from ${materialContext} featuring ${design} visible on top, stacked on a ${setting}, ${storeContext}, clean minimalist presentation, fabric folded with crisp edges, design clearly visible facing upward, soft studio lighting from the side, photorealistic fabric texture and color, no person, no mannequin, Shopify product detail photo, ${selectedMood} aesthetic, commercial quality, sharp focus${optionalRequirements}`;
+      tips = [
+        "Folded shots are perfect for bundle packs or size comparison shots",
+        "Show 2–3 color variants folded together for collection pages",
+        "Use depth-of-field blur on background for separation",
+        isOversize ? "Fold to show chest print clearly — oversized shirts fold wider" : "",
+        "IP-Adapter 0.85 for crisp design on folded top surface"
+      ].filter(Boolean);
+    } else if (selectedMockup === "lifestyle-candid") {
+      positive = `Lifestyle candid photography of ${modelDesc} naturally wearing a ${color} ${fitDesc} made from ${materialContext} featuring ${design} ${placement}, ${styling}, ${setting}, natural unposed moment, ${selectedMood} aesthetic, ${storeContext}, warm authentic lighting, person is laughing or looking away, shallow depth of field with blurred background, candid movement like walking or reaching, photorealistic skin tones${isOversize ? ', oversized relaxed streetwear silhouette, fabric draping loosely' : ''}, visible but not forced product, editorial fashion magazine quality, hyperrealistic${optionalRequirements}`;
+      tips = [
+        "Lifestyle candid = model not looking at camera for natural feel",
+        "Use motion blur prompt token 'slight motion blur' for authenticity",
+        isOversize ? "Oversize fits look natural in lifestyle candid — no need to tuck" : "",
+        "Shallow DOF (f/1.8–f/2.8) blurs background, keeps product sharp",
+        "Golden hour or overcast outdoor light works perfectly here"
+      ].filter(Boolean);
+    }
+
+    const negative = `deformed hands, extra fingers, missing fingers, disfigured face, blurry face, distorted print, warped text, melted graphics, fuzzy design, pixelated design, stretched fabric, incorrect fabric texture, broken seams, bad collar shape, wrong product category, over-saturated colors, unrealistic lighting, harsh shadows, low quality, jpeg artifacts, noise, grain, watermark, logo overlay, random brand logo, fake sale badge, bad anatomy, bad proportions, cartoon, illustration, painting, sketch, nsfw, wrong product color, missing design, empty shirt, invisible print, two people, multiple subjects, background clutter`;
+
+    generatedPositive = positive;
+    generatedNegative = negative;
+
+    document.getElementById('prompt-out').textContent = positive;
+    document.getElementById('neg-out').textContent = negative;
+
+    const paramsHtml = `
+      <div class="param-chip"><div class="pk">Sampler</div><div class="pv">DDIM</div></div>
+      <div class="param-chip"><div class="pk">Steps</div><div class="pv">35–40</div></div>
+      <div class="param-chip"><div class="pk">CFG scale</div><div class="pv">6–7</div></div>
+      <div class="param-chip"><div class="pk">Resolution</div><div class="pv">1024×1024</div></div>
+      <div class="param-chip"><div class="pk">Hires fix</div><div class="pv">2× / 0.40</div></div>
+      <div class="param-chip"><div class="pk">IP-Adapter</div><div class="pv">0.75–0.85</div></div>
+      <div class="param-chip"><div class="pk">Use</div><div class="pv">${storeUse.replace(' image','')}</div></div>
+      <div class="param-chip"><div class="pk">Ratio</div><div class="pv">${aspect.split(' ')[0]}</div></div>
+      <div class="param-chip"><div class="pk">Fabric</div><div class="pv">${fabric.split(' ').slice(0, 2).join(' ')}</div></div>
+    `;
+    document.getElementById('params-out').innerHTML = paramsHtml;
+    document.getElementById('tips-list').innerHTML = tips.map(t => `<li>${t}</li>`).join('');
+
+    const box = document.getElementById('output-box');
+    box.classList.add('visible');
+    box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  function copyPrompt() {
+    const text = currentTab === 'negative' ? generatedNegative : generatedPositive;
+    navigator.clipboard.writeText(text).then(() => {
+      const btn = document.getElementById('copy-btn');
+      btn.innerHTML = '<i class="ti ti-check" style="font-size:13px" aria-hidden="true"></i> Copied!';
+      btn.style.color = 'var(--color-text-success)';
+      btn.style.borderColor = 'var(--color-border-success)';
+      setTimeout(() => {
+        btn.innerHTML = '<i class="ti ti-copy" style="font-size:13px" aria-hidden="true"></i> Copy';
+        btn.style.color = ''; btn.style.borderColor = '';
+      }, 2000);
+    });
+  }
+</script>
